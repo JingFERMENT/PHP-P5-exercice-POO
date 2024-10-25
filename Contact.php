@@ -7,12 +7,12 @@ class Contact {
     private ?string $phone_number;
 
 
-    // public function __construct(?int $id,?string $name,?string $email,?string $phone_number) {
-    //     $this->id = $id;
-    //     $this->name = $name;
-    //     $this->email = $email;
-    //     $this->phone_number = $phone_number;
-    // }
+    public function __construct(?int $id = null,?string $name = null,?string $email = null,?string $phone_number = null) {
+        $this->id = $id;
+        $this->name = $name;
+        $this->email = $email;
+        $this->phone_number = $phone_number;
+    }
     
         
    //*************** ID ***************//
@@ -63,7 +63,6 @@ class Contact {
 
     public function toString(): string {
         
-        return $this->id.','. $this->name.','.$this->email.','.$this->phone_number;
+        return $this->id.', '. $this->name.', '.$this->email.', '.$this->phone_number;
     }
-
 }

@@ -33,7 +33,7 @@ class Command {
     public static function detail(int $id):void {
 
         $detail = ContactManager::findById($id);
-        echo "\n". $detail['id'].','. $detail['name'].','. $detail['email'].','. $detail['phone_number']."\n"; 
+        echo "\n". $detail['id'].', '. $detail['name'].', '. $detail['email'].', '. $detail['phone_number']."\n"; 
     }
 
     /**

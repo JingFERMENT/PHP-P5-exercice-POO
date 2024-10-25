@@ -13,6 +13,13 @@ class Contact {
         $this->email = $email;
         $this->phone_number = $phone_number;
     }
+
+    // provide a formatted string representation
+    public function __toString():string
+    {
+        return $this->id.'. '. $this->name.', '.$this->email.', '.$this->phone_number . "\n";
+    
+    }
     
         
    //*************** ID ***************//
@@ -59,10 +66,5 @@ class Contact {
     {
         $this->phone_number = $phone_number;
 
-    }
-
-    public function toString(): string {
-        
-        return $this->id.', '. $this->name.', '.$this->email.', '.$this->phone_number;
     }
 }

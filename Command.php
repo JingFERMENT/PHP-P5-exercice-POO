@@ -10,13 +10,13 @@ class Command {
      * 
      * @return void
      */
-    public static function list():void {
+    public static function list() {
 
         $listOfContacts = ContactManager::findAll();
 
         if (!empty($listOfContacts)) {
             foreach ($listOfContacts as $oneContact) {
-                echo "\n".$oneContact->toString()."\n";
+                echo "\n". $oneContact;
             }
         } else {
             echo "Aucun contact trouvé!\n";
@@ -30,10 +30,14 @@ class Command {
      * 
      * @return void
      */
-    public static function detail(int $id):void {
+    public static function detail(int $id):array {
 
         $detail = ContactManager::findById($id);
-        echo "\n". $detail['id'].', '. $detail['name'].', '. $detail['email'].', '. $detail['phone_number']."\n"; 
+        if (!$detail) {
+            echo "Contact with ID $id not found.\n";
+            return [];
+        }
+        return $detail;
     }
 
     /**
@@ -65,6 +69,17 @@ class Command {
 
         return $delete > 0;  
 
+    }
+
+    public static function modify(int $id, string $name, string $email, string $phoneNumber):bool {
+
+        $modification = new Contact();
+        $modification->setId($id);
+        $modification->setName($name);
+        $modification->setEmail($email);
+        $modification->setPhoneNumber($phoneNumber);
+
+        return ContactManager::modify($modification);
     }
 
 }

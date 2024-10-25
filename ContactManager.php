@@ -53,7 +53,7 @@ class ContactManager
         $data = $sth->fetch();
              
         if (!$data) {
-            throw new Exception('Erreur lors de la récupération du contact');
+            return [];
         } else {
             return $data;
         }
@@ -73,8 +73,8 @@ class ContactManager
         $sth = $pdo->prepare($sql);
         
         $sth->bindValue(':name', $contact->getName());
-        $sth->bindValue('email', $contact->getEmail());
-        $sth->bindValue('phone_number', $contact->getPhoneNumber());
+        $sth->bindValue(':email', $contact->getEmail());
+        $sth->bindValue(':phone_number', $contact->getPhoneNumber());
         
         $sth->execute();
         return $sth->rowCount() > 0;  
@@ -96,6 +96,29 @@ class ContactManager
         $sth->bindValue(':id', $id);
         $sth->execute();
         return $sth->rowCount() > 0;  
+    }
+
+
+    public static function modify($contact) :bool {
+        
+        $pdo = DBConnect::getPDO();
+
+         // Requête contenant un marqueur nominatif
+        $sql = 'UPDATE `contact` SET `name` = :name, `email` = :email,`phone_number` = :phone_number 
+        WHERE `id` = :id;';
+
+        // Si marqueur nominatif, il faut préparer la requête
+        $sth = $pdo->prepare($sql);
+
+         // Affectation de la valeur correspondant au marqueur nominatif concerné
+         $sth->bindValue(':name', $contact->getName());
+         $sth->bindValue(':email', $contact->getEmail());
+         $sth->bindValue(':phone_number', $contact->getPhoneNumber());
+         $sth->bindValue(':id', $contact->getId());
+         $sth->execute();
+   
+         return $sth->rowCount() > 0;  
+        
     }
 
 }

@@ -59,4 +59,12 @@ class Command {
 
     }
 
+    public static function delete(int $id):bool {
+
+        $delete = ContactManager::delete($id);
+
+        return $delete > 0;  
+
+    }
+
 }

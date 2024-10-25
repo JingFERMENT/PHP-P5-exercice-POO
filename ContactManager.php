@@ -79,4 +79,23 @@ class ContactManager
         $sth->execute();
         return $sth->rowCount() > 0;  
     }
+
+    
+    /**
+     * Méthode pour supprimer un contact dans la list
+     * @param int $id
+     * 
+     * @return bool
+     */
+    public static function delete(int $id) : bool {
+        $pdo = DBConnect::getPDO();
+
+        $sql = 'DELETE FROM `contact` WHERE `id`=:id';
+
+        $sth = $pdo->prepare($sql);
+        $sth->bindValue(':id', $id);
+        $sth->execute();
+        return $sth->rowCount() > 0;  
+    }
+
 }

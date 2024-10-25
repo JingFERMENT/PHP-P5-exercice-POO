@@ -11,11 +11,8 @@ Le programme propose les commandes suivantes :
 - **Ajouter un contact** : `create [name] [email] [phone number]`
 - **Supprimer un contact** : `delete [id]`
 - **Quitter le programme** : `quit`
-
-### Bonus
-
 - **Afficher l’aide** : `help` (affiche toutes les commandes disponibles)
-- **Modifier un contact** : `update [id] [new name] [new email] [new phone number]`
+- **Modifier un contact** : `modify [id]`
 
 ## Prérequis
 

@@ -2,6 +2,8 @@
 
 Ce projet est un gestionnaire de carnet d'adresses, conçu pour être utilisé dans un terminal en ligne de commande. Il permet de gérer une liste de contacts avec des options simples et intuitives.
 
+Pour lancer votre programme en ligne de commande, écrivez dans un terminal `php main.php` .
+
 ## Fonctionnalités
 
 Le programme propose les commandes suivantes :

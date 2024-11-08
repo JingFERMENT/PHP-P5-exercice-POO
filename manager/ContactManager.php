@@ -1,7 +1,7 @@
 <?php
 
 require_once(__DIR__ . '/helpers/DBConnect.php');
-require_once(__DIR__. '/Contact.php');
+require_once(__DIR__. '/model/Contact.php');
 
 class ContactManager
 {

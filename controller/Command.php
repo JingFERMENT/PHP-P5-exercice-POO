@@ -1,7 +1,7 @@
 <?php
 
-require_once(__DIR__.'/ContactManager.php');
-require_once(__DIR__.'/Contact.php');
+require_once(__DIR__.'/manager/ContactManager.php');
+require_once(__DIR__.'/model/Contact.php');
 
 class Command {
     /**
@@ -11,16 +11,20 @@ class Command {
      * @return void
      */
     public static function list() {
+        try {
+            $listOfContacts = ContactManager::findAll();
 
-        $listOfContacts = ContactManager::findAll();
-
-        if (!empty($listOfContacts)) {
-            foreach ($listOfContacts as $oneContact) {
-                echo "\n". $oneContact;
+            if (!empty($listOfContacts)) {
+                foreach ($listOfContacts as $oneContact) {
+                    echo "\n". $oneContact;
+                }
+            } else {
+                echo "Aucun contact trouvé!\n";
             }
-        } else {
-            echo "Aucun contact trouvé!\n";
+        } catch (\Throwable $th) {
+            echo "erreur base des données.";
         }
+       
     }
 
     /**

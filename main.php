@@ -1,9 +1,10 @@
 <?php
-require_once(__DIR__ . '/Command.php');
+require_once(__DIR__ . '/controller/Command.php');
 
 // Display available commands on start
 echo "Welcome to the Contact Manager!\nType 'help' for a list of available commands.\n\n";
 
+// une boucle infinie Puisqu’il n’y a pas (encore) de commande pour arrêter le programme, il ne s’arrêtera pas tout seul.
 while (true) {
 
     $line = trim(readline("Please enter your command: "));
@@ -19,7 +20,7 @@ while (true) {
             exit;
 
         case 'list':
-            echo Command::list();
+            Command::list();
             break;
 
         case 'help':

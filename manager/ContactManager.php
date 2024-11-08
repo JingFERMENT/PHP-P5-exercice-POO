@@ -1,5 +1,7 @@
 <?php
 
+// Le manager est orienté sur la gestion des données et des opérations de traitement métier.
+
 require_once(__DIR__ . '/helpers/DBConnect.php');
 require_once(__DIR__. '/model/Contact.php');
 

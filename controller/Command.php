@@ -2,8 +2,8 @@
 
 // s'occupe principalement de la logique de la requête, du routage, et de l'interface utilisateur.
 
-require_once(__DIR__.'/manager/ContactManager.php');
-require_once(__DIR__.'/model/Contact.php');
+require_once(__DIR__.'/../manager/ContactManager.php');
+require_once(__DIR__.'/../model/Contact.php');
 
 class Command {
     /**

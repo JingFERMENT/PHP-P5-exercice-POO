@@ -1,28 +1,31 @@
 <?php
 require_once(__DIR__ . '/controller/Command.php');
 
-// Display available commands on start
 echo "Welcome to the Contact Manager!\nType 'help' for a list of available commands.\n\n";
 
 // une boucle infinie Puisqu’il n’y a pas (encore) de commande pour arrêter le programme, il ne s’arrêtera pas tout seul.
 while (true) {
 
     $line = trim(readline("Please enter your command: "));
-
-    // Split the command and parameters for easier parsing
+ 
+    // La fonction explode() est utilisée pour diviser une chaîne de caractères en un tableau, en utilisant un délimiteur spécifique.
+    // 2 ==> $limit : Nombre maximum d'éléments dans le tableau. 
     $parts = explode(' ', $line, 2);
-    $command = strtolower($parts[0]); // the first part of input
-    $params = isset($parts[1]) ? $parts[1] : ''; // the 2nd part of input with id
+    $command = strtolower($parts[0]); // 1ère partie de la valeur d'entrée
+    $params = isset($parts[1]) ? $parts[1] : ''; // 2ème partie de la valeur d'entrée (valeur avec un id)
 
     switch ($command) {
+        // quand la 1ère partie de valeur d'entrée est "quit"
         case 'quit':
             echo "Quit the Contact Manager, good bye !";
             exit;
 
+        // quand la 1ère partie de valeur d'entrée est "list"
         case 'list':
             Command::list();
             break;
 
+        // quand la 1ère partie de valeur d'entrée est "help"
         case 'help':
             echo "Commandes disponibles :
             list                                    : liste les contacts

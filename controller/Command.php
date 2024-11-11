@@ -2,23 +2,25 @@
 
 // s'occupe principalement de la logique de la requête, du routage, et de l'interface utilisateur.
 
-require_once(__DIR__.'/../manager/ContactManager.php');
-require_once(__DIR__.'/../model/Contact.php');
+require_once(__DIR__ . '/../manager/ContactManager.php');
+require_once(__DIR__ . '/../model/Contact.php');
 
-class Command {
+class Command
+{
     /**
      * 
      * Afficher la liste des contacts
      * 
      * @return void
      */
-    public static function list() {
+    public static function list()
+    {
         try {
             $listOfContacts = ContactManager::findAll();
 
             if (!empty($listOfContacts)) {
                 foreach ($listOfContacts as $oneContact) {
-                    echo "\n". $oneContact;
+                    echo "\n" . $oneContact;
                 }
             } else {
                 echo "Aucun contact trouvé!\n";
@@ -26,7 +28,6 @@ class Command {
         } catch (\Throwable $th) {
             echo "erreur base des données.";
         }
-       
     }
 
     /**
@@ -34,16 +35,16 @@ class Command {
      * 
      * @param int $id
      * 
-     * @return void
+     * @return array|string
      */
-    public static function detail(int $id):array {
-
-        $detail = ContactManager::findById($id);
-        if (!$detail) {
-            echo "Contact with ID $id not found.\n";
-            return [];
+    public static function detail(int $id): array|false
+    {
+        try {
+            $detail = ContactManager::findById($id);
+            return $detail;
+        } catch (\Throwable $th) {
+            return false;
         }
-        return $detail;
     }
 
     /**
@@ -55,8 +56,8 @@ class Command {
      * 
      * @return [type]
      */
-    public function create(string $name, string $email, string $phoneNumber):bool{
-
+    public function create(string $name, string $email, string $phoneNumber): bool
+    {
         $creation = new Contact();
 
         $creation->setName($name);
@@ -65,27 +66,53 @@ class Command {
 
         $addCreation = ContactManager::insert($creation);
 
-        return $addCreation > 0;  
-
+        return $addCreation > 0;
     }
 
-    public static function delete(int $id):bool {
+    public static function delete(int $id): bool
+    {
+        // Vérifier si le contact existe
+        if (!ContactManager::findById($id)) {
+            return false; // Si le contact n'existe pas, retourne `false`
+        }
 
-        $delete = ContactManager::delete($id);
-
-        return $delete > 0;  
-
+        try {
+            $delete = ContactManager::delete($id);
+            return $delete > 0;
+        } catch (\Throwable $th) {
+            return false;
+        }
     }
 
-    public static function modify(int $id, string $name, string $email, string $phoneNumber):bool {
+    public static function modify(int $id, string $name, string $email, string $phoneNumber): bool
+    {
+        // Vérifier si le contact existe avant de procéder
+        if(!ContactManager::findById($id)) {
+            return false;
+        }
 
-        $modification = new Contact();
-        $modification->setId($id);
-        $modification->setName($name);
-        $modification->setEmail($email);
-        $modification->setPhoneNumber($phoneNumber);
+        try {
+            // Créer et configurer l'objet Contact avec les nouvelles informations
+                $modification = new Contact();
+                $modification->setId($id);
+                $modification->setName($name);
+                $modification->setEmail($email);
+                $modification->setPhoneNumber($phoneNumber);
+                
+                $resultCode = ContactManager::modify($modification);
 
-        return ContactManager::modify($modification);
+                if ($resultCode == 1) {
+                    echo "Update successful! The information has been updated!\n";
+                    return true;
+                } elseif ($resultCode == 2) {
+                    echo "Update successful! No changes were necessary.\n";
+                    return true;
+                } else {
+                    echo 'problem of database connexion!';
+                    return false;
+                }
+        } catch (\Throwable $th) {
+            return false;
+        }
     }
-
 }

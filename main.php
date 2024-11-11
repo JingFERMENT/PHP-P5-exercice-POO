@@ -1,5 +1,9 @@
 <?php
 require_once(__DIR__ . '/controller/Command.php');
+require_once(__DIR__ . '/utils/echoHelp.php');
+require_once(__DIR__ . '/utils/handleCreate.php');
+require_once(__DIR__ . '/utils/handleModify.php');
+require_once(__DIR__. '/config/init.php');
 
 echo "Welcome to the Contact Manager!\nType 'help' for a list of available commands.\n\n";
 
@@ -7,7 +11,7 @@ echo "Welcome to the Contact Manager!\nType 'help' for a list of available comma
 while (true) {
 
     $line = trim(readline("Please enter your command: "));
- 
+
     // La fonction explode() est utilisée pour diviser une chaîne de caractères en un tableau, en utilisant un délimiteur spécifique.
     // 2 ==> $limit : Nombre maximum d'éléments dans le tableau. 
     $parts = explode(' ', $line, 2);
@@ -15,75 +19,72 @@ while (true) {
     $params = isset($parts[1]) ? $parts[1] : ''; // 2ème partie de la valeur d'entrée (valeur avec un id)
 
     switch ($command) {
-        // quand la 1ère partie de valeur d'entrée est "quit"
+            // quand la 1ère partie de valeur d'entrée est "quit"
         case 'quit':
             echo "Quit the Contact Manager, good bye !";
             exit;
 
-        // quand la 1ère partie de valeur d'entrée est "list"
+            // quand la 1ère partie de valeur d'entrée est "list"
         case 'list':
             Command::list();
             break;
 
-        // quand la 1ère partie de valeur d'entrée est "help"
+            // quand la 1ère partie de valeur d'entrée est "help"
         case 'help':
-            echo "Commandes disponibles :
-            list                                    : liste les contacts
-            detail [id]                             : afficher le détail d’un contact
-            create [name], [email], [phone number]  : créer un contact
-            modify [id]                             : modifier un contact
-            delete [id]                             : supprimer un contact
-            help                                    : afficher cette aide
-            quit                                    : quitter le programme\n";
+            echo echoHelp();
             break;
 
+            // quand la 1ère partie de valeur d'entrée est "detail"
         case 'detail':
+
+            // vérifier si une chaîne contient uniquement des chiffres 
+            // ^début de la chaîne \d+: rechercher des chiffres $: fin de la chaîne
             $pattern = '/^\d+$/';
+
+            // preg_match: vérifier si une chaîne correspond à une expression régulière donnée
             if (preg_match($pattern, $params)) {
                 $detail = Command::detail($params);
-                echo "\n" . $detail['id'] . ', ' . $detail['name'] . ', ' . $detail['email'] . ', ' . $detail['phone_number'] . "\n";
+                echo $detail ? "\nPlease find the detail as follow:\n" . $detail['id'] . ', ' . $detail['name'] . ', ' . $detail['email'] . ', ' . $detail['phone_number'] . "\n" :
+                INVALID_ID_MSG;
             } else {
-                echo "Please provide a valid ID.\n";
+                echo INVALID_ID_MSG;
             }
             break;
 
+            // quand la 1ère partie de valeur d'entrée est "create"
         case 'create':
+
+            // pour extraire trois parties distinctes dans une chaîne de texte, séparées par des virgules.
+            // ^ indique le début de la chaîne
+            // [^,]+ Cherche un ou plusieurs caractères (+) qui ne sont pas des virgules ([^,]).
+            // \s* : Capture zéro ou plusieurs espaces blancs après la virgule. 
+            // (.+) : capture un ou plusieurs caractères, jusqu'à la fin de la chaîne.
             $pattern = '/^([^,]+),\s*([^,]+),\s*(.+)$/';
+
+            // vérifier si la chaîne $params correspond à $pattern et, 
+            // $matches : si une correspondance est trouvée, elle stocke les parties correspondantes dans le tableau $matches.
             if (preg_match($pattern, $params, $matches)) {
                 $name = $matches[1];
                 $email = $matches[2];
                 $phoneNumber = $matches[3];
 
-                // name, email and phone number validation
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    echo "Invalid email format.\n";
-                } elseif (!preg_match('/^(?:(?:\+33|0)[1-9])(?:[ .-]?\d{2}){4}$/', $phoneNumber)) {
-                    echo "Invalid phone number format.\n";
-                } elseif (!preg_match('/^[A-Za-zÀ-ÿ]{2,}$/', $name)) {
-                    echo "Invalid name format.It should be only characters and a minimum of 2 characters long!\n";
-                } else {
-                    $contact = new Command();
-                    $contact->create($name, $email, $phoneNumber);
-                    echo "Contact created successfully.\n";
-                }
+                handleCreate($email, $phoneNumber, $name);
             } else {
                 echo "Invalid format. Use: create [name], [email], [phone number]\n";
             }
             break;
 
         case 'delete':
-            $pattern = '/^\d+$/';
-            if (preg_match($pattern, $params)) {
-                Command::delete($params);
-                echo "Contact deleted successfully.\n";
+            if (preg_match(ID_PATTERN, $params)) {
+                $deleteContact = Command::delete($params);
+                echo $deleteContact ? "Contact deleted successfully.\n" : INVALID_ID_MSG;
             } else {
-                echo "Please provide a valid ID.\n";
+                echo INVALID_ID_MSG;
             }
             break;
 
         case 'modify':
-            $pattern = '/^\d+$/';
-            if (preg_match($pattern, $params)) {
+            if (preg_match(ID_PATTERN, $params)) {
 
                 $currentDetails = Command::detail($params);
 
@@ -95,33 +96,26 @@ while (true) {
 
                     echo "Current details: $id, $currentName, $currentEmail, $currentPhoneNumber.\nDo you want to update this contact? (yes/no): ";
 
-                    // Split the current details into name, email, and phone number (adjust as needed)
-                    $response = trim(fgets(STDIN)); // Capture user input
+                    $response = strtolower(trim(fgets(STDIN)));
 
-                    if (strtolower($response) === 'yes') {
-                        echo "Enter new name (or press Enter to keep current):";
-                        $name = trim(fgets(STDIN)); // fgets(STDIN): capture user input from the command line in php
-                        $name = $name ?: $currentName;
+                    if ($response === 'yes') {
+                        
+                        $name = handleModify("Please enter new name (or press Enter to keep current): ", NAME_PATTERN, "Invalid name format. It should only contain letters and be at least 2 characters long.\n", $currentName);
+                        
+                        $email = handleModify("Please enter new email (or press Enter to keep current): ", FILTER_VALIDATE_EMAIL,"Invalid email format.\n", $currentEmail, true);
+                        
+                        $phoneNumber = handleModify("Please enter new phone number (or press Enter to keep current): ", PHONE_PATTERN, "Invalid phone number format.\n", $currentPhoneNumber);
 
-                        echo "Enter new email (or press Enter to keep current): ";
-                        $email = trim(fgets(STDIN));
-                        $email = $email ?: $currentEmail;
+                        Command::modify($id, $name, $email, $phoneNumber);
 
-                        echo "Enter new phone number (or press Enter to keep current): ";
-                        $phoneNumber = trim(fgets(STDIN));
-                        $phoneNumber = $phoneNumber ?: $currentPhoneNumber;
-
-                        $updateSuccess = Command::modify($id, $name, $email, $phoneNumber);
-
-                        echo $updateSuccess ? "Update successful!\n" : "Update failed!\n";
-                    } else {
+                    } else { // si pas envie de modifier ou pas de saisie 
                         echo "Update canceled.\n";
                     }
-                } else {
-                    echo "Please provide a valid ID.\n";
+                } else { // pas de id existant 
+                    echo INVALID_ID_MSG;
                 }
-            } else {
-                echo "Please provide a valid ID.\n";
+            } else { // message erreur dans le cas où il n'y a pas de chiffre numérique 
+                echo INVALID_ID_MSG;
             }
             break;
 
@@ -130,5 +124,5 @@ while (true) {
             break;
     }
 
-    echo "\nVous avez saisi : $line\n";
+    echo "\nYou entered: $line\n";
 }

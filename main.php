@@ -36,13 +36,8 @@ while (true) {
 
             // quand la 1ère partie de valeur d'entrée est "detail"
         case 'detail':
-
-            // vérifier si une chaîne contient uniquement des chiffres 
-            // ^début de la chaîne \d+: rechercher des chiffres $: fin de la chaîne
-            $pattern = '/^\d+$/';
-
             // preg_match: vérifier si une chaîne correspond à une expression régulière donnée
-            if (preg_match($pattern, $params)) {
+            if (preg_match(ID_PATTERN, $params)) {
                 $detail = Command::detail($params);
                 echo $detail ? "\nPlease find the detail as follow:\n" . $detail['id'] . ', ' . $detail['name'] . ', ' . $detail['email'] . ', ' . $detail['phone_number'] . "\n" :
                 INVALID_ID_MSG;

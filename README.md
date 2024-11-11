@@ -8,13 +8,13 @@ Pour lancer votre programme en ligne de commande, écrivez dans un terminal `php
 
 Le programme propose les commandes suivantes :
 
+- **Afficher l’aide** : `help` (affiche toutes les commandes disponibles)
 - **Afficher la liste des contacts** : `list`
 - **Afficher le détail d’un contact** : `detail [id]`
-- **Ajouter un contact** : `create [name] [email] [phone number]`
+- **Ajouter un contact** : `create [name], [email], [phone number]`
+- **Modifier un contact** : `modify [id]`
 - **Supprimer un contact** : `delete [id]`
 - **Quitter le programme** : `quit`
-- **Afficher l’aide** : `help` (affiche toutes les commandes disponibles)
-- **Modifier un contact** : `modify [id]`
 
 ## Prérequis
 

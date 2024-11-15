@@ -1,7 +1,7 @@
 <?php 
 require_once(__DIR__.'/../config/init.php');
 
-function handleCreate($email, $phoneNumber, $name) {
+function createPompts($email, $phoneNumber, $name) {
     // name, email and phone number validation
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo "Invalid email format.\n";
@@ -10,7 +10,7 @@ function handleCreate($email, $phoneNumber, $name) {
     } elseif (!preg_match(NAME_PATTERN, $name)) {
         echo "Invalid name format.It should be only characters and a minimum of 2 characters long!\n";
     } else {
-        $contact = new Command();
+        $contact = new CommandController();
         $contact->create($name, $email, $phoneNumber);
         echo "Contact created successfully.\n";
     }

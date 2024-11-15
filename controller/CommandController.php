@@ -3,9 +3,9 @@
 // s'occupe principalement de la logique de la requête, du routage, et de l'interface utilisateur.
 
 require_once(__DIR__ . '/../manager/ContactManager.php');
-require_once(__DIR__ . '/../model/Contact.php');
+require_once(__DIR__ . '/../model/ContactModel.php');
 
-class Command
+class CommandController
 {
     /**
      * 
@@ -58,7 +58,7 @@ class Command
      */
     public function create(string $name, string $email, string $phoneNumber): bool
     {
-        $creation = new Contact();
+        $creation = new ContactModel();
 
         $creation->setName($name);
         $creation->setEmail($email);
@@ -93,7 +93,7 @@ class Command
 
         try {
             // Créer et configurer l'objet Contact avec les nouvelles informations
-                $modification = new Contact();
+                $modification = new ContactModel();
                 $modification->setId($id);
                 $modification->setName($name);
                 $modification->setEmail($email);

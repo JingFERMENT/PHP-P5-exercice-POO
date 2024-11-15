@@ -2,7 +2,7 @@
 
 require_once(__DIR__ . '/../config/init.php');
 
-class DBConnect
+class DBService
 {
     private static $pdo;
 

@@ -1,7 +1,7 @@
 <?php 
 
 // function pour valider les données de modifications 
-function handleModify(string $prompt, $pattern, string $errorMsg, string $defaultValue, bool $isEmail = false) {
+function modifyPompts(string $prompt, $pattern, string $errorMsg, string $defaultValue, bool $isEmail = false) {
 
     // tant que la condition n'est pas remplie, continue
     do {

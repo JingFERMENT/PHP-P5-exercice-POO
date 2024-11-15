@@ -1,6 +1,6 @@
 <?php
 
-class Contact {
+class ContactModel {
     private ?int $id;
     private ?string $name;
     private ?string $email;

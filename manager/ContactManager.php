@@ -2,8 +2,8 @@
 
 // Le manager est orienté sur la gestion des données et des opérations de traitement métier.
 
-require_once(__DIR__ . '/../helpers/DBConnect.php');
-require_once(__DIR__. '/../model/Contact.php');
+require_once(__DIR__ . '/../service/DBService.php');
+require_once(__DIR__. '/../model/ContactModel.php');
 
 class ContactManager
 {
@@ -14,7 +14,7 @@ class ContactManager
      */
     public static function findAll(): array
     {
-        $pdo = DBConnect::getPDO();
+        $pdo = DBService::getPDO();
         $sql = 'SELECT * FROM `contact`;';
         $sth = $pdo->prepare($sql);
         $sth->execute();
@@ -25,7 +25,7 @@ class ContactManager
         if (!empty($contactsFromDatabase)) {
             foreach ($contactsFromDatabase as $oneContactFromDatabase) {
                 // Créez un objet Contact pour chaque ligne
-                $contacts[] = new Contact($oneContactFromDatabase['id'], 
+                $contacts[] = new ContactModel($oneContactFromDatabase['id'], 
                 $oneContactFromDatabase['name'], 
                 $oneContactFromDatabase['email'], 
                 $oneContactFromDatabase['phone_number']);
@@ -47,7 +47,7 @@ class ContactManager
      */
     public static function findById(int $id): array |false {
 
-        $pdo = DBConnect::getPDO();
+        $pdo = DBService::getPDO();
         $sql = 'SELECT * FROM `contact` WHERE `id` =:id;';
         $sth = $pdo->prepare($sql);
         $sth->bindValue(':id', $id, PDO::PARAM_INT);
@@ -67,7 +67,7 @@ class ContactManager
      */
     public static function insert($contact): bool{
 
-        $pdo = DBConnect::getPDO();
+        $pdo = DBService::getPDO();
         
         $sql = 'INSERT INTO `contact`(`name`, `email`, `phone_number`) 
         VALUES (:name, :email, :phone_number);';
@@ -90,7 +90,7 @@ class ContactManager
      * @return bool
      */
     public static function delete(int $id) : bool {
-        $pdo = DBConnect::getPDO();
+        $pdo = DBService::getPDO();
 
         $sql = 'DELETE FROM `contact` WHERE `id`=:id';
 
@@ -103,7 +103,7 @@ class ContactManager
 
     public static function modify($contact) : int {
         
-        $pdo = DBConnect::getPDO();
+        $pdo = DBService::getPDO();
 
          // Requête contenant un marqueur nominatif
         $sql = 'UPDATE `contact` SET `name` = :name, `email` = :email,`phone_number` = :phone_number 

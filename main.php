@@ -1,8 +1,8 @@
 <?php
-require_once(__DIR__ . '/controller/Command.php');
-require_once(__DIR__ . '/utils/echoHelp.php');
-require_once(__DIR__ . '/utils/handleCreate.php');
-require_once(__DIR__ . '/utils/handleModify.php');
+require_once(__DIR__ . '/controller/CommandController.php');
+require_once(__DIR__ . '/pompts/helpPompts.php');
+require_once(__DIR__ . '/pompts/createPompts.php');
+require_once(__DIR__ . '/pompts/modifyPompts.php');
 require_once(__DIR__. '/config/init.php');
 
 echo "Welcome to the Contact Manager!\nType 'help' for a list of available commands.\n\n";
@@ -26,19 +26,20 @@ while (true) {
 
             // quand la 1ère partie de valeur d'entrée est "list"
         case 'list':
-            Command::list();
+            CommandController::list();
             break;
 
             // quand la 1ère partie de valeur d'entrée est "help"
         case 'help':
-            echo echoHelp();
+            echo helpPompts();
             break;
 
             // quand la 1ère partie de valeur d'entrée est "detail"
         case 'detail':
             // preg_match: vérifier si une chaîne correspond à une expression régulière donnée
             if (preg_match(ID_PATTERN, $params)) {
-                $detail = Command::detail($params);
+                $detail = CommandController::detail($params);
+                // quand l'id est inexistant
                 echo $detail ? "\nPlease find the detail as follow:\n" . $detail['id'] . ', ' . $detail['name'] . ', ' . $detail['email'] . ', ' . $detail['phone_number'] . "\n" :
                 INVALID_ID_MSG;
             } else {
@@ -63,7 +64,7 @@ while (true) {
                 $email = $matches[2];
                 $phoneNumber = $matches[3];
 
-                handleCreate($email, $phoneNumber, $name);
+                createPompts($email, $phoneNumber, $name);
             } else {
                 echo "Invalid format. Use: create [name], [email], [phone number]\n";
             }
@@ -71,7 +72,10 @@ while (true) {
 
         case 'delete':
             if (preg_match(ID_PATTERN, $params)) {
-                $deleteContact = Command::delete($params);
+                
+                $deleteContact = CommandController::delete($params);
+                
+                // quand l'id est inexistant 
                 echo $deleteContact ? "Contact deleted successfully.\n" : INVALID_ID_MSG;
             } else {
                 echo INVALID_ID_MSG;
@@ -81,7 +85,7 @@ while (true) {
         case 'modify':
             if (preg_match(ID_PATTERN, $params)) {
 
-                $currentDetails = Command::detail($params);
+                $currentDetails = CommandController::detail($params);
 
                 if ($currentDetails) {
                     $id = $currentDetails['id'];
@@ -95,13 +99,13 @@ while (true) {
 
                     if ($response === 'yes') {
                         
-                        $name = handleModify("Please enter new name (or press Enter to keep current): ", NAME_PATTERN, "Invalid name format. It should only contain letters and be at least 2 characters long.\n", $currentName);
+                        $name = modifyPompts("Please enter new name (or press Enter to keep current): ", NAME_PATTERN, "Invalid name format. It should only contain letters and be at least 2 characters long.\n", $currentName);
                         
-                        $email = handleModify("Please enter new email (or press Enter to keep current): ", FILTER_VALIDATE_EMAIL,"Invalid email format.\n", $currentEmail, true);
+                        $email = modifyPompts("Please enter new email (or press Enter to keep current): ", FILTER_VALIDATE_EMAIL,"Invalid email format.\n", $currentEmail, true);
                         
-                        $phoneNumber = handleModify("Please enter new phone number (or press Enter to keep current): ", PHONE_PATTERN, "Invalid phone number format.\n", $currentPhoneNumber);
+                        $phoneNumber =modifyPompts("Please enter new phone number (or press Enter to keep current): ", PHONE_PATTERN, "Invalid phone number format.\n", $currentPhoneNumber);
 
-                        Command::modify($id, $name, $email, $phoneNumber);
+                        CommandController::modify($id, $name, $email, $phoneNumber);
 
                     } else { // si pas envie de modifier ou pas de saisie 
                         echo "Update canceled.\n";

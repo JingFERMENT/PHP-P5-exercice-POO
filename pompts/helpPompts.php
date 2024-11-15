@@ -1,6 +1,6 @@
 <?php
 
-function echoHelp(): string {
+function helpPompts(): string {
     return "Commandes disponibles :
             list                                    : liste les contacts
             detail [id]                             : afficher le détail d’un contact
